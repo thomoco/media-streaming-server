@@ -26,7 +26,7 @@ Most of the functionality documented here is based on the following awesome open
 * data structure:
 * Depends on your OS in use - nginx typically runs with a default lower-permission user:group of for example:
 
-``` www-default:www-default
+```www-default:www-default
 ```
 
 ## Directories and Files
