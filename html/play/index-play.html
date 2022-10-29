@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="utf-8">
+   <meta name="robots" content="noindex, nofollow">
+   <title>[TITLE]</title>
+   <link rel="stylesheet" href="/css/styles.css">
+   <link rel="icon" type="image/x-icon" sizes="any" href="/images/favicon.svg">
+   <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+   <link rel="shortcut" type="image/x-icon" href="/images/favicon.ico">
+   <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico">
+   <link rel="mask-icon" type="image/x-icon" href="/images/favicon.svg">
+   <link rel="icon" type="image/x-icon" sizes="256x256" href="/images/favicon-256.png">
+   <link rel="icon" type="image/x-icon" sizes="192x192" href="/images/favicon-192.png">
+   <link rel="icon" type="image/x-icon" sizes="180x180" href="/images/favicon-180.png">
+   <link rel="icon" type="image/x-icon" sizes="160x160" href="/images/favicon-160.png">
+   <link rel="icon" type="image/x-icon" sizes="114x114" href="/images/favicon-114.png">
+   <link rel="icon" type="image/x-icon" sizes="110x110" href="/images/favicon-110.png">
+   <link rel="icon" type="image/x-icon" sizes="64x64" href="/images/favicon-64.png">
+   <link rel="icon" type="image/x-icon" sizes="48x48" href="/images/favicon-48.png">
+   <link rel="icon" type="image/x-icon" sizes="32x32" href="/images/favicon-32.png">
+   <link rel="icon" type="image/x-icon" sizes="24x24" href="/images/favicon-24.png">
+   <link rel="icon" type="image/x-icon" sizes="16x16" href="/images/favicon-16.png">
+<!--
+   <link rel="apple-touch-icon" sizes="256x256" href="/images/favicon-256.png">
+   <link rel="apple-touch-icon" sizes="192x192" href="/images/favicon-192.png">
+   <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon-180.png">
+   <link rel="apple-touch-icon" sizes="160x160" href="/images/favicon-160.png">
+-->
+   <link rel="apple-touch-icon" sizes="114x114" href="/images/favicon-114.png">
+   <link rel="apple-touch-icon" sizes="110x110" href="/images/favicon-110.png">
+   <link rel="apple-touch-icon" sizes="64x64" href="/images/favicon-64.png">
+   <link rel="apple-touch-icon" sizes="48x48" href="/images/favicon-48.png">
+   <link rel="apple-touch-icon" sizes="32x32" href="/images/favicon-32.png">
+   <link rel="apple-touch-icon" sizes="24x24" href="/images/favicon-24.png">
+   <link rel="apple-touch-icon" sizes="16x16" href="/images/favicon-16.png">
+</head>
+<body>
+
+<div>
+
+<video id="videoPlayer" preload="auto" controls></video>
+<script type="text/javascript" id="hls" src="/js/hls/hls.js"></script>
+<script type="text/javascript" id="dash" src="/js/dash/dash.all.min.js"></script>
+
+<script type="text/javascript">
+   // functions
+   function isASCII(str) {
+      return /^[\x00-\x7F]*$/.test(str);
+   }
+
+   function isValid(str){
+      if(typeof(str)!=='string'){
+         return false;
+      }
+      for(var i=0;i<str.length;i++){
+         if(str.charCodeAt(i)>127){
+            return false;
+         }
+      }
+      return true;
+   }
+
+   // load parameters
+   const queryString = window.location.search;
+   // debug
+   // document.write('queryString: ', queryString, '<br>');
+
+   // parse parameters
+   const urlParams = new URLSearchParams(queryString);
+   // debug
+   // document.write('urlParams: ', urlParams, '<br>');
+   const myStreamkey = urlParams.get('key')
+   // debug
+   // document.write('myStreamkey: ', myStreamkey, '<br>');
+
+   // check validity of Stream Key string
+      if (myStreamkey == "") {
+         window.alert("Stream Key is empty");
+         throw new Error();
+      } else if (myStreamkey.length > 64) {
+         window.alert("Stream Key is too long");
+         throw new Error();
+      } else if (/[^a-zA-Z0-9]/.test(myStreamkey)) {
+         window.alert("Stream Key must contain only letters and numbers - no special characters allowed");
+         throw new Error();
+      }
+      var isValid0 = isASCII(myStreamkey);
+      if (isValid0 != true) {
+         window.alert("Stream Key is invalid");
+         throw new Error();
+      }
+      var isValid1 = isValid(myStreamkey);
+      if (isValid1 != true) {
+         window.alert("Stream Key is invalid");
+         throw new Error();
+      }
+
+    // build URLS
+    // var me = document.getElementById('hls');
+    var myVideoPlayer = document.getElementById('videoPlayer');
+    var videoSrcHLS = 'https://[URL]/play/hls/' + myStreamkey + '.m3u8';
+    var videoSrcDASH = 'https://[URL]/play/dash/' + myStreamkey + '.mpd';
+    var videoSrcAirplay = 'https://[URL]/play/air/' + myStreamkey + '.m3u8';
+
+// iPad/iPhone direct
+    if (myVideoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
+
+      // load special URL (with no auth) for Airplay
+      myVideoPlayer.src = videoSrcAirplay;
+      // myVideoPlayer.src = videoSrcHLS;
+      myVideoPlayer.load();
+
+      // setup
+      myVideoPlayer.type = application/vnd.apple.mpegurl;
+      myVideoPlayer.controls = true;
+      myVideoPlayer.autopictureinpicture = true;
+      myVideoPlayer.preload = true;
+      myVideoPlayer.height = '720';
+      myVideoPlayer.width = '1280';
+      myVideoPlayer.airplay();
+
+      // autoplay
+      var myAutoplay = myVideoPlayer.autoplay;
+      if (myAutoplay == false) {
+        myVideoPlayer.autoplay = false;
+      } else {
+        myVideoPlayer.autoplay = true;
+      }
+
+      // debug
+      // console.log('HLS video native player');
+
+      // add event listener for autoplay
+      if (window.WebKitPlaybackTargetAvailabilityEvent) {
+         var airPlayButton = document.getElementById("airPlayButton");
+         myVideoPlayer.addEventListener('webkitplaybacktargetavailabilitychanged',
+           function(event) {
+             switch (event.availability) {
+                case "available":
+                   airPlay.style.display = 'block';
+                   airPlayButton.hidden = false;
+                   airPlayButton.disabled = false;
+                   var isAirplayAvailable = true;
+                   break;
+                case "not-available":
+                   airPlay.style.display = 'none';
+                   airPlayButton.hidden = true;
+                   airPlayButton.disabled = true;
+                   var isAirplayAvailable = false;
+                   break;
+             } 
+          }); 
+
+         if (isAirPlayAvailable) { 
+            // var myVideoPlayer = document.getElementById("videoPlayer");
+            airPlayButton.addEventListener('click', function(event) {
+               myVideoPlayer.webkitShowPlaybackTargetPicker();
+            });
+            // var myVideoPlayer = document.getElementById("videoPlayer");
+            myVideoPlayer.addEventListener('webkitcurrentplaybacktargetiswirelesschanged', 
+            function(event) {
+               updateAirPlayButtonWirelessStyle();
+               updatePageDimmerForWirelessPlayback();
+            });
+         }
+      } else {
+         airPlay.style.display = 'none';
+      }
+
+      myVideoPlayer.load();
+      myVideoPlayer.play();
+
+// HLS
+    } else if (Hls.isSupported()) {
+      // debug
+      // console.log('HLS video player');
+      // fine tuning
+      var config = {
+         autoStartLoad: true,
+         startPosition: -1,
+         debug: false,
+         enableWorker: true,
+      };
+      var hls = new Hls(config);
+      // bind them together
+      hls.attachMedia(myVideoPlayer);
+      // MEDIA_ATTACHED event is fired by hls object once MediaSource is ready
+      hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+        // debug
+        // console.log('video and hls.js are now bound together !');
+        hls.loadSource(videoSrcHLS);
+        hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+          // debug
+          // console.log(
+          //   'manifest loaded, found ' + data.levels.length + ' quality level'
+          // );
+          // handling errors
+          hls.on(Hls.Events.ERROR, function (event, data) {
+             var errorType = data.type;
+             var errorDetails = data.details;
+             var errorFatal = data.fatal;      
+             switch (data.details) {
+                case Hls.ErrorDetails.FRAG_LOAD_ERROR:
+                // catch errors
+                   break;
+                default:
+                   break;
+             }
+             if (data.fatal) {
+                switch (data.type) {
+                   case Hls.ErrorTypes.NETWORK_ERROR:
+                      // try to recover network error
+                      console.log('fatal network error encountered, try to recover');
+                      hls.startLoad();
+                      break;
+                   case Hls.ErrorTypes.MEDIA_ERROR:
+                      console.log('fatal media error encountered, try to recover');
+                      hls.recoverMediaError();
+                      break;
+                   default:
+                      // cannot recover
+                      hls.destroy();
+                      break;
+                }
+             }
+          });
+        });
+        // play video
+        // hls.on(Hls.Events.MANIFEST_PARSED,playVideo);
+        myVideoPlayer.play()
+      });
+
+// DASH player
+   } else {
+      // debug
+      // console.log('DASH video player');
+      // unneeded
+      // var me = document.getElementById('dash');
+      (function(){
+         var myVideo = videoSrcDASH;
+         // autoplay
+         var myAutoplay = myVideo.autoplay;
+         if (myAutoplay == false) {
+            myVideo.autoplay = false;
+         } else {
+            myVideo.autoplay = true;
+         }
+         var player = dashjs.MediaPlayer().create();
+         player.initialize(document.querySelector("#videoPlayer"), myVideo, true);
+      })();
+    }
+
+</script>
+  
+</div>
+
+</body>
+</html>

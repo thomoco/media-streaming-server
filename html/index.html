@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html language="en">
+
+<head>
+   <meta charset="utf-8">
+   <meta name="robots" content="noindex, nofollow">
+   <title>[TITLE]</title>
+   <link rel="stylesheet" href="/css/styles.css">
+   <link rel="icon" type="image/x-icon" sizes="any" href="/images/favicon.svg">
+   <link rel="icon" type="image/x-icon" sizes="any" href="/images/favicon.ico">
+   <link rel="shortcut" type="image/x-icon" href="/images/favicon.ico">
+   <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico">
+   <link rel="mask-icon" type="image/x-icon" href="/images/favicon.svg">
+   <link rel="icon" type="image/x-icon" sizes="256x256" href="/images/favicon-256.png">
+   <link rel="icon" type="image/x-icon" sizes="192x192" href="/images/favicon-192.png">
+   <link rel="icon" type="image/x-icon" sizes="180x180" href="/images/favicon-180.png">
+   <link rel="icon" type="image/x-icon" sizes="160x160" href="/images/favicon-160.png">
+   <link rel="icon" type="image/x-icon" sizes="114x114" href="/images/favicon-114.png">
+   <link rel="icon" type="image/x-icon" sizes="110x110" href="/images/favicon-110.png">
+   <link rel="icon" type="image/x-icon" sizes="64x64" href="/images/favicon-64.png">
+   <link rel="icon" type="image/x-icon" sizes="48x48" href="/images/favicon-48.png">
+   <link rel="icon" type="image/x-icon" sizes="32x32" href="/images/favicon-32.png">
+   <link rel="icon" type="image/x-icon" sizes="24x24" href="/images/favicon-24.png">
+   <link rel="icon" type="image/x-icon" sizes="16x16" href="/images/favicon-16.png">
+<!--
+   <link rel="apple-touch-icon" sizes="256x256" href="/images/favicon-256.png">
+   <link rel="apple-touch-icon" sizes="192x192" href="/images/favicon-192.png">
+   <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon-180.png">
+   <link rel="apple-touch-icon" sizes="160x160" href="/images/favicon-160.png">
+-->
+   <link rel="apple-touch-icon" sizes="114x114" href="/images/favicon-114.png">
+   <link rel="apple-touch-icon" sizes="110x110" href="/images/favicon-110.png">
+   <link rel="apple-touch-icon" sizes="64x64" href="/images/favicon-64.png">
+   <link rel="apple-touch-icon" sizes="48x48" href="/images/favicon-48.png">
+   <link rel="apple-touch-icon" sizes="32x32" href="/images/favicon-32.png">
+   <link rel="apple-touch-icon" sizes="24x24" href="/images/favicon-24.png">
+   <link rel="apple-touch-icon" sizes="16x16" href="/images/favicon-16.png">
+</head>
+
+<body>
+<div class="background">
+   <div class="transbox">
+      <h1 align="center">
+      <img src="/images/[BACKGROUND].png" alt="[BACKGROUND]" width="35%"></img>
+      </h1>
+      <form id="formStreamKey" METHOD="POST">
+         Stream Key:
+         <input type="text" id="streamkey" maxlength="64"/>
+         <input type="submit" value="Go!"/>
+      </form>
+      <p align="center">
+      <A HREF="/streams" align="CENTER" target="_blank">Streams</A>
+      <br clear="all">
+   </div>
+
+   <p align="center">&nbsp;
+   <br clear="all">
+
+   <div class="[BOTTOM-IMAGE]">
+      <IMG WIDTH="100%" HEIGHT="100%" SRC="/images/[BOTTOM-IMAGE].png">
+      <p align="center">&nbsp;
+      <br clear="all">
+   </div>
+
+</div>
+
+<script type="text/javascript" id="keyform">
+   // functions
+   function isASCII(str) {
+      return /^[\x00-\x7F]*$/.test(str);
+   }
+
+   function isValid(str){
+      if(typeof(str)!=='string'){
+         return false;
+      }
+      for(var i=0;i<str.length;i++){
+         if(str.charCodeAt(i)>127){
+            return false;
+         }
+      }
+      return true;
+   }
+
+   // load form
+   const form  = document.getElementById('formStreamKey');
+
+   form.addEventListener('submit', (event) => {
+      const myStreamkey = form.elements['streamkey'].value;
+      // handle the form data
+
+      // debug
+      // document.write('<!DOCTYPE html><br>');
+      // document.write('Form submitted! Time stamp: ' + event.timeStamp + '<br>');
+      // document.write('Form element streamkey: ', myStreamkey, '<br>');
+
+      // stop form submission
+      event.preventDefault();
+
+      // check validity of Stream Key string
+      if (myStreamkey == "") {
+         window.alert("Stream Key is empty");
+         return false;
+      } else if (myStreamkey.length > 64) {
+         window.alert("Stream Key is too long");
+         return false;
+      } else if (/[^a-zA-Z0-9]/.test(myStreamkey)) {
+         window.alert("Stream Key must contain only letters and numbers - no special characters allowed");
+         return false;
+      }
+      var isValid0 = isASCII(myStreamkey);
+      if (isValid0 != true) {
+         window.alert("Stream Key is invalid"); 
+         return false;
+      }
+      var isValid1 = isValid(myStreamkey);
+      if (isValid1 != true) {
+         window.alert("Stream Key is invalid"); 
+         return false;
+      }
+
+      // debug
+      // document.write('Streamkey clean! Time stamp: ' + event.timeStamp + '<br>');
+      // document.write('Streamkey: ', myStreamkey, '<br>');
+
+      var baseURL = "https://[URL]/play/index-play.html";
+      var newURL = baseURL + "?key=" + myStreamkey;
+      // debug
+      // document.write('baseURL: ', baseURL, '<br>');
+      // document.write('newURL: ', newURL, '<br>');
+
+      // open new page
+      window.open(newURL, "_blank");
+
+   });
+</script>
+
+</body>
+</html>
