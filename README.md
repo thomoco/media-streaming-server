@@ -1,4 +1,4 @@
-# Media Stream Server
+# Media Streaming Server
 
 Open-source media streaming server for use with OBS or other RTMP/RTMPS compatible streaming client
 
@@ -24,10 +24,7 @@ Most of the functionality documented here is based on the following awesome open
 * Hosted node of choice - a single cloud host at AWS/GCS/Azure or wherever should be able to support a significant number of viewers, assuming appropriate bandwidth and to a lesser degree CPU/memory. A modern 4GB-16GB should be well sufficient
 * web files: files reference /www for path simplicity
 * data structure:
-* Depends on your OS in use - nginx typically runs with a default lower-permission user:group of for example:
-
-```www-default:www-default
-```
+* Depends on your OS in use - nginx typically runs with a default lower-permission user:group of for example: www-default:www-default
 
 ## Directories and Files
 
@@ -68,8 +65,8 @@ Most of the functionality documented here is based on the following awesome open
 
 While this README is not going to go into configuring encryption, there are many good articles on using Let's Encrypt with certbot for certificate management and configured with Nginx:
 
-https://letsencrypt.org/getting-started/
-https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/
+* https://letsencrypt.org/getting-started/
+* https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/
 
 ## Install Nginx with nginx-rtmp-module
 
@@ -88,24 +85,29 @@ apt install libnginx-mod-rtmp
 
 ## Configure Nginx
 
-```nginx.conf
+### nginx.conf
+
 location: this file is included in this repository at ngnix/nginx.conf and would generally be placed at /etc/nginx/nginx.conf
+
 configuration: Replace the sections that reference [URL] with your URL to reference the letsencrypt certificates. There are many other options for performance and limits - not going to catalog those here so you'll find those references at the nginx.org website if you need detailed tuning
-```
 
-```sites-enabled/default
+### sites-enabled/default
+
 location: this file is included in this repository at nginx/sites-enabled/default and would generally be placed at /etc/nginx/sites-enabled/default
+
 configuration: Replace the sections that reference [URL] with your URL for server_name and letsencrypt certificates
-```
 
-```htpasswd
+### htpasswd
+
 location: /www/auth/htpasswd
-configuration: build this file using the htpasswd tool (part of the Apache httpd project at https://httpd.apache.org/docs/current/programs/htpasswd.html) for managing user viewing access
-```
 
-```Configure viewer-count.py
+configuration: build this file using the htpasswd tool (part of the Apache httpd project at https://httpd.apache.org/docs/current/programs/htpasswd.html) for managing user viewing access
+
+## Configure viewer-count.py
+
 The script can be installed at /www/scripts/viewer-count.py or wherever you prefer. The script uses python3 with a few standard modules and reads the log file /var/log/nginx/access.log to gather (approximate) viewer counts. Would recommend just running it out of cron per minute:
 
+```
 * * * * *   /www/scripts/viewer-count.py
 ```
 
