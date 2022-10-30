@@ -28,9 +28,9 @@ Most of the functionality documented here is based on the following awesome open
 ## Directories and Files
 
 * /www/html - web files
-* /www/html/index.html - HTML landing page for entering streamkey or viewing available streams
+  * /www/html/index.html - HTML landing page for entering streamkey or viewing available streams
 * /www/html/css - CSS directory
-* /www/html/css/styles.css - basic CSS styles, provides a method for transparent background images on the index.html landing page
+  * /www/html/css/styles.css - basic CSS styles, provides a method for transparent background images on the index.html landing page
 * /www/html/images - your images of choice for favicon and foreground/background images
 * /www/html/stats - nginx stats directory
 * /www/html/play - media file directory to temporarily stored during streamed
