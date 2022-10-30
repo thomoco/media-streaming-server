@@ -6,7 +6,7 @@ Open-source media streaming server for use with OBS or other RTMP/RTMPS compatib
 
 Released under the Apache 2.0 License except where third-party code is used, which remains licensed under each as appropriate. No warranty or other liability is provided.
 
-This guide provide documentation and some code on assembling a media streaming server from open-source components. The use case that this project was assembled for was for a friend's band wanting to livestream their music and videos to a select fanbase using the Open Broadcaster Software ("OBS"), without having to use a public and ad-sponsored service like YouTube or Twitch, and with the ability to manage and restrict the audience with basic authentication. Other examples of use might include livestreaming yourself playing video games, or livestreaming your own live journalism or adventures around the world to a select audience. Or potentially many more use cases. This media streaming server can handle multiple RTMP streams and many viewers concurrently.
+This guide provide documentation and some code on assembling a media streaming server from open-source components. The use case that this project was assembled for was for a friend's band wanting to livestream their music and videos to a select fanbase using the Open Broadcaster Software ("OBS"), without having to use a public and ad-sponsored service like YouTube or Twitch, and with the ability to manage and restrict the audience with basic authentication. Other examples of use might include livestreaming yourself playing video games, or streaming your own live journalism or adventures around the world to a select audience. Or potentially many more use cases. This media streaming server can handle multiple RTMP streams and many viewers concurrently.
 
 ## Dependencies
 
@@ -14,7 +14,7 @@ Most of the functionality documented here is based on the following awesome open
 
 * nginx [https://nginx.org] - high-performance web server
 * nginx-rtmp-module [https://github.com/arut/nginx-rtmp-module] - powerful rtmp streaming module for nginx (notable thanks to Roman Arutyunyan for developing this powerful module)
-* OBS Studio [https://obsproject.com] - incredible open-source video recording and live streaming software
+* OBS Studio [https://obsproject.com] - remarkable open-source video recording and live streaming software
 * HLS video client [https://github.com/video-dev/hls.js/] - open-source video player for playing HLS in a JavaScript-compatible browser
 * DASH video client [https://github.com/Dash-Industry-Forum/dash.js] - open-source video player for playing MPEG DASH in a JavaScript-compatible browser
 
@@ -23,7 +23,6 @@ Most of the functionality documented here is based on the following awesome open
 * OS of choice - using Ubuntu 22.04 with a Linux 5.15 kernel but this setup should run on any relatively recent Linux system. May run on Windows also, not testing and thus not at all sure
 * Hosted node of choice - a single cloud host at AWS/GCS/Azure or wherever should be able to support a significant number of viewers, assuming appropriate bandwidth and to a lesser degree CPU/memory. A modern 4GB-16GB should be well sufficient
 * web files: files reference /www for path simplicity
-* data structure:
 * Depends on your OS in use - nginx typically runs with a default lower-permission user:group of for example: www-default:www-default
 
 ## Directories and Files
@@ -35,23 +34,19 @@ Most of the functionality documented here is based on the following awesome open
 * /www/html/images - your images of choice for favicon and foreground/background images
 * /www/html/stats - nginx stats directory
 * /www/html/play - media file directory to temporarily stored during streamed
-* /www/html/play/index-play.html - HTML page that identifies viewer browser type and selects the appropriate player
-* /www/html/play/hls - HLS media files tmp directory
-* /www/html/play/dash - DASH media files tmp directory
-* /www/html/play/air - symlink to /www/html/play/hls
-* /www/html/js - hls and dash players
-  * /www/html/js/hls - hls and dash players
-  * /www/html/js/dash - hls and dash players
-* /www/html/play - temporary media files for hls and dash
-  * /www/html/play/hls - hls files, must be writable by www-default (or user nginx user)
-  * /www/html/play/dash - dash files, must be writable by www-default (or user nginx user)
+  * /www/html/play/index-play.html - HTML page that identifies viewer browser type and selects the appropriate player
+  * /www/html/play/hls - HLS media files tmp directory, must be writable by nginx user
+  * /www/html/play/dash - DASH media files tmp directory, must be writable by nginx user
   * /www/html/play/air - this part is a bit of a hack, but this is just a symlink to /www/html/play/hls to access the HLS media files without requiring authentication (AirPlay devices cannot assume the authentication of the device sending the airplay, for some rather insecure reason). The nginx.conf default file will apply different access permissions to this symlinked directory
+* /www/html/js - hls and dash players
+  * /www/html/js/hls - HLS video player
+  * /www/html/js/dash - DASH video player
 * /www/auth/htpasswd - htpasswd authentication file for basic auth
 * /www/rtmp - nginx rtmp module statistics
-* /www/rtmp/counts - directory for writing viewer counts
+  * /www/rtmp/counts - directory for writing viewer counts
 * /www/scripts - script file for operation, currently just capturing viewer count with viewer-count.py
 * /etc/nginx - default Ubuntu location for nginx configuration
-* /etc/nginx/sites-enabled - virtual host configuration for nginx, just using /etc/nginx/sites-enabled/default in this example
+  * /etc/nginx/sites-enabled - virtual host configuration for nginx, just using /etc/nginx/sites-enabled/default in this example
 * /var/log/nginx/access.log - nginx access log and used for collecting viewer information via viewer-count.py
 * /var/log/nginx/rtmp_access.log - rtmp nginx access log
 
