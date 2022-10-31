@@ -8,6 +8,8 @@ Released under the Apache 2.0 License except where third-party code is used, whi
 
 This guide provide documentation and some code on assembling a media streaming server from open-source components. The use case that this project was assembled for was for a friend's band wanting to livestream their music and videos to a select fanbase using the Open Broadcaster Software ("OBS"), without having to use a public and ad-sponsored service like YouTube or Twitch, and with the ability to manage and restrict the audience with basic authentication. Other examples of use might include livestreaming yourself playing video games, or streaming your own live journalism or adventures around the world to a select audience. Or potentially many more use cases. This media streaming server can handle multiple RTMP streams and many viewers concurrently.
 
+In short, this media streaming server setup is a repeater of whatever media you send it.
+
 ## Dependencies
 
 Most of the functionality documented here is based on the following awesome open-source projects:
