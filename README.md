@@ -34,7 +34,6 @@ Most of the functionality documented here is based on the following awesome open
 * /www/html/css - CSS directory
   * /www/html/css/styles.css - basic CSS styles, provides a method for transparent background images on the index.html landing page
 * /www/html/images - your images of choice for favicon and foreground/background images
-* /www/html/stats - nginx stats directory
 * /www/html/play - media file directory to temporarily stored during streamed
   * /www/html/play/index-play.html - HTML page that identifies viewer browser type and selects the appropriate player
   * /www/html/play/hls - HLS media files tmp directory, must be writable by nginx user
