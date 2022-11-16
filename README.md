@@ -29,23 +29,27 @@ Most of the functionality documented here is based on the following awesome open
 
 ## Directories and Files
 
-* /www/html - web files
+* /www/html/ - web file directory
   * /www/html/index.html - HTML landing page for entering streamkey or viewing available streams
-* /www/html/css - CSS directory
+* /www/html/css/ - CSS directory
   * /www/html/css/styles.css - basic CSS styles, provides a method for transparent background images on the index.html landing page
-* /www/html/images - your images of choice for favicon and foreground/background images
-* /www/html/play - media file directory to temporarily stored during streamed
+* /www/html/images/ - directory for your images of choice for favicon and foreground/background images
+* /www/html/play/ - directory to temporarily store media files during stream
   * /www/html/play/index-play.html - HTML page that identifies viewer browser type and selects the appropriate player
-  * /www/html/play/hls - HLS media files tmp directory, must be writable by nginx user
-  * /www/html/play/dash - DASH media files tmp directory, must be writable by nginx user
-  * /www/html/play/air - this part is a bit of a hack, but this is just a symlink to /www/html/play/hls to access the HLS media files without requiring authentication (AirPlay devices cannot assume the authentication of the device sending the airplay, for some rather insecure reason). The nginx.conf default file will apply different access permissions to this symlinked directory
-* /www/html/js - hls and dash players
-  * /www/html/js/hls - HLS video player
-  * /www/html/js/dash - DASH video player
+  * /www/html/play/hls/ - HLS media files tmp directory, must be writable by nginx user
+  * /www/html/play/dash/ - DASH media files tmp directory, must be writable by nginx user
+  * /www/html/play/air - this part is a bit of a hack, but this is just a symlink to /www/html/play/hls/ to access the HLS media files without requiring authentication (AirPlay devices cannot assume the authentication of the device sending the airplay, for some rather insecure reason). The nginx.conf default file will apply different access permissions to this symlinked directory
+
+```$ ln -s /www/html/play/hls /www/html/play/air
+```
+
+* /www/html/js/ - JavaScript directory
+  * /www/html/js/hls/ - HLS video player
+  * /www/html/js/dash/ - DASH video player
 * /www/auth/htpasswd - htpasswd authentication file for basic auth
-* /www/rtmp - nginx rtmp module statistics
-  * /www/rtmp/counts - directory for writing viewer counts
-* /www/scripts - script file for operation, currently just capturing viewer count with viewer-count.py
+* /www/rtmp/ - directory for nginx rtmp module statistics
+  * /www/rtmp/counts/ - directory for writing viewer counts
+* /www/scripts/ - directoy for script files for operation, currently just capturing viewer count with viewer-count.py
 * /etc/nginx - default Ubuntu location for nginx configuration
   * /etc/nginx/sites-enabled - virtual host configuration for nginx, just using /etc/nginx/sites-enabled/default in this example
 * /var/log/nginx/access.log - nginx access log and used for collecting viewer information via viewer-count.py
