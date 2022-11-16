@@ -148,7 +148,10 @@ cp -p *js /www/html/js/dash
 ## AirPlay Directory
 This is just a simple symlink to the hls/ directory, but the nginx config for permissions allows for AirPlay to access directly. This is an unfortunate workaround hack for the fact that AirPlay source devices cannot pass their authentication to the AirPlay target device:
 
-```$ ln -s /www/html/play/hls /www/html/play/air
+```
+
+$ ln -s /www/html/play/hls /www/html/play/air
+
 ```
 
 ## Using OBS
