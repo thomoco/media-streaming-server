@@ -39,10 +39,6 @@ Most of the functionality documented here is based on the following awesome open
   * /www/html/play/hls/ - HLS media files tmp directory, must be writable by nginx user
   * /www/html/play/dash/ - DASH media files tmp directory, must be writable by nginx user
   * /www/html/play/air - this part is a bit of a hack, but this is just a symlink to /www/html/play/hls/ to access the HLS media files without requiring authentication (AirPlay devices cannot assume the authentication of the device sending the airplay, for some rather insecure reason). The nginx.conf default file will apply different access permissions to this symlinked directory
-
-```$ ln -s /www/html/play/hls /www/html/play/air
-```
-
 * /www/html/js/ - JavaScript directory
   * /www/html/js/hls/ - HLS video player
   * /www/html/js/dash/ - DASH video player
@@ -147,6 +143,12 @@ npm run sanity-check
 npm run build
 mkdir /www/html/js/hls
 cp -p *js /www/html/js/dash
+```
+
+## AirPlay Directory
+This is just a simple symlink to the hls/ directory, but the nginx config for permissions allows for AirPlay to access directly. This is an unfortunate workaround hack for the fact that AirPlay source devices cannot pass their authentication to the AirPlay target device:
+
+```$ ln -s /www/html/play/hls /www/html/play/air
 ```
 
 ## Using OBS
