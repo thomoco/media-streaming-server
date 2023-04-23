@@ -28,7 +28,7 @@ server {
 	ssl_certificate_key /etc/letsencrypt/live/[URL]/privkey.pem;
 	ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
 	ssl_ciphers HIGH:!aNULL:!MD5;
-	keepalive_timeout 70;
+	keepalive_timeout 75s;
 	root /www/html;
 
 	# Note: You should disable gzip for SSL traffic.
@@ -45,22 +45,63 @@ server {
 	include /etc/nginx/mime.types;
 	default_type application/octet-stream;
 
+	### LOCATIONS
+
+        ## DENY ALL
 	# deny access to .htaccess files, if Apache's document root
 	# concurs with nginx's one
 	#
 	location ~ /\.ht {
-	   deny all;
+		deny all;
 	}
 
-	location ~ \.css {
-		add_header  Content-Type    text/css;
-		add_header X-Robots-Tag "noindex, nofollow";
-	}
-	location ~ \.js {
-		add_header  Content-Type    application/x-javascript;
-		add_header X-Robots-Tag "noindex, nofollow";
+	# block all dot files
+	location ~ /\. {
+		deny all;
 	}
 
+	## ALLOW ALL (AirPlay workaround)
+	location /air {
+		root /www/html/play;
+		include /etc/nginx/mime.types;
+		allow all;
+		limit_conn peruser 5;
+		limit_conn clients 10;
+		limit_conn serverconnections 200;
+		limit_conn_log_level info;
+		gzip off;
+		types {
+			text/html html htm shtml;
+			application/vnd.apple.mpegurl m3u8;
+		}
+		# Disable cache
+		add_header Cache-Control no-cache;
+		add_header X-Robots-Tag "noindex, nofollow";
+		# CORS setup
+		add_header 'Access-Control-Allow-Origin' '*' always;
+		add_header 'Access-Control-Expose-Headers' 'Content-Length';
+		# allow CORS preflight requests
+		if ($request_method = 'OPTIONS') {
+			add_header 'Access-Control-Allow-Origin' '*';
+			add_header 'Access-Control-Max-Age' 1728000;
+			add_header 'Content-Type' 'text/plain charset=UTF-8';
+			add_header 'Content-Length' 0;
+			return 204;
+	}
+
+	# images
+	location /images {
+		root /www/html;
+		include /etc/nginx/mime.types;
+		allow all;
+		gzip on;
+		add_header Cache-Control no-cache;
+		add_header X-Robots-Tag "noindex, nofollow";
+		add_header 'Access-Control-Allow-Origin' '*' always;
+		add_header 'Access-Control-Expose-Headers' 'Content-Length';
+	}
+
+	## ALLOW WITH AUTH
 	location / {
 		root /www/html;
 		include /etc/nginx/mime.types;
@@ -72,7 +113,7 @@ server {
 		limit_conn clients 10;
 		limit_conn serverconnections 200;
 		limit_conn_log_level info;
-
+		# gzip handling
 		gzip on;
 		gzip_vary on;
 		gzip_proxied any;
@@ -80,19 +121,15 @@ server {
 		gzip_buffers 16 8k;
 		gzip_http_version 1.1;
 		gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
-
 		# Add index.php to the list if you are using PHP
 		index index.html index.htm index.nginx-debian.html;
 		try_files $uri $uri/ =404;
-
 		# To allow POST on static pages
 		error_page  405     =200 $uri;
-
 		# headers
 		add_header 'Access-Control-Allow-Origin' '*';
 		add_header Cache-Control no-cache;
 		add_header X-Robots-Tag "noindex, nofollow";
-
 		# types
 		types {
 			text/html html htm shtml;
@@ -102,8 +139,30 @@ server {
 		}
 	}
 
+	location ~ \.css {
+		satisfy any;
+		auth_basic "auth";
+		auth_basic_user_file /www/auth/htpasswd;
+		deny all;
+		add_header  Content-Type    text/css;
+		add_header X-Robots-Tag "noindex, nofollow";
+	}
+
+	location ~ \.js {
+		satisfy any;
+		auth_basic "auth";
+		auth_basic_user_file /www/auth/htpasswd;
+		deny all;
+		add_header  Content-Type    application/x-javascript;
+		add_header X-Robots-Tag "noindex, nofollow";
+	}
+
 	location /crossdomain.xml {
 		root /www/html;
+		satisfy any;
+		auth_basic "auth";
+		auth_basic_user_file /www/auth/htpasswd;
+		deny all;
 		default_type text/xml;
 		expires 24h;
 		add_header X-Robots-Tag "noindex, nofollow";
@@ -122,18 +181,16 @@ server {
 		limit_conn serverconnections 200;
 		limit_conn_log_level info;
 		gzip off;
-
+		# types
 		types {
 			text/html html htm shtml;
 			application/vnd.apple.mpegurl m3u8;
 			application/dash+xml mpd;
 			video/mp2t ts;
 		}
-
 		# Disable cache
 		add_header Cache-Control no-cache;
 		add_header X-Robots-Tag "noindex, nofollow";
-
 		# CORS setup
 		add_header 'Access-Control-Allow-Origin' '*' always;
 		add_header 'Access-Control-Expose-Headers' 'Content-Length';
@@ -146,50 +203,6 @@ server {
 			return 204;
 		}
 	}
-
-	# images
-	location /images {
-		root /www/html;
-		include /etc/nginx/mime.types;
-		allow all;
-		gzip on;
-		add_header Cache-Control no-cache;
-		add_header X-Robots-Tag "noindex, nofollow";
-		add_header 'Access-Control-Allow-Origin' '*' always;
-		add_header 'Access-Control-Expose-Headers' 'Content-Length';
-	}
-
-	# locations
-	location /air {
-		root /www/html/play;
-		include /etc/nginx/mime.types;
-		allow all;
-		limit_conn peruser 5;
-		limit_conn clients 10;
-		limit_conn serverconnections 200;
-		limit_conn_log_level info;
-		gzip off;
-
-		types {
-			text/html html htm shtml;
-			application/vnd.apple.mpegurl m3u8;
-		}
-
-		# Disable cache
-		add_header Cache-Control no-cache;
-		add_header X-Robots-Tag "noindex, nofollow";
-
-		# CORS setup
-		add_header 'Access-Control-Allow-Origin' '*' always;
-		add_header 'Access-Control-Expose-Headers' 'Content-Length';
-		# allow CORS preflight requests
-		if ($request_method = 'OPTIONS') {
-			add_header 'Access-Control-Allow-Origin' '*';
-			add_header 'Access-Control-Max-Age' 1728000;
-			add_header 'Content-Type' 'text/plain charset=UTF-8';
-			add_header 'Content-Length' 0;
-			return 204;
-		}
 
 	location /status {
 		stub_status on;
@@ -253,4 +266,5 @@ server {
 		deny all;
 		add_header X-Robots-Tag "noindex, nofollow";
 	}
+
 }
